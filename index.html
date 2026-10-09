@@ -89,11 +89,18 @@ section{min-height:100vh;display:flex;flex-direction:column;justify-content:cent
   align-items:center;justify-content:center;gap:22px;cursor:none;transition:opacity .8s;
   background:radial-gradient(ellipse 70% 60% at 50% 40%,#fffdf7,#eaf7ec 60%,#dff1e4)}
 #boot.gone{opacity:0;pointer-events:none}
-#boot .logo{font-family:var(--brush);font-weight:400;font-size:clamp(34px,6.4vw,66px);letter-spacing:.16em;
-  color:var(--leaf);position:relative;text-shadow:0 4px 18px rgba(143,211,174,.5);text-align:center}
-#boot .logo .gl{position:absolute;left:0;top:0;width:100%;white-space:nowrap;color:var(--blossom);
-  clip-path:inset(0 0 55% 0);animation:gl 3.4s steps(2) infinite;opacity:.8}
-@keyframes gl{0%,92%{transform:none;opacity:.8}94%{transform:translateX(-3px);opacity:.45}96%{transform:translateX(2px)}98%{transform:none;opacity:.8}}
+/* 开屏：毛笔逐字落墨，慢慢浮出 */
+#boot .logo{font-family:var(--brush);font-weight:400;font-size:clamp(34px,6.4vw,66px);
+  letter-spacing:.16em;text-align:center;isolation:isolate;line-height:1.35;padding:0 6px}
+#boot .logo span{position:relative;display:inline-block;color:transparent;
+  background-image:linear-gradient(96deg,#3c5a49 6%,#5aa67f 52%,rgba(143,211,174,.78) 100%);
+  -webkit-background-clip:text;background-clip:text;
+  clip-path:inset(0 100% 0 0);opacity:.14;filter:blur(3.4px);
+  animation:brush 1.25s cubic-bezier(.24,.7,.26,1) forwards,inkBreathe 5.2s ease-in-out infinite;
+  animation-delay:var(--d,0s),calc(var(--d,0s) + 1.6s)}
+#boot .logo span::before{content:attr(data-c);position:absolute;left:0;top:0;z-index:-1;
+  color:rgba(122,196,160,.3);filter:blur(12px);opacity:0;
+  animation:inkHalo 1.25s ease-out forwards;animation-delay:var(--d,0s)}
 #boot .sub{font-family:var(--mono);font-size:11px;letter-spacing:.42em;color:var(--dim);text-transform:uppercase}
 #boot .term{font-family:var(--mono);font-size:13px;color:var(--leaf);min-height:150px;width:min(540px,86vw);
   border:1px solid var(--line-moon);background:rgba(255,255,255,.8);padding:18px;line-height:1.9;
@@ -132,31 +139,32 @@ h1.hero-t{font-family:var(--brush);font-weight:400;color:var(--leaf);letter-spac
   font-size:clamp(52px,11vw,130px);line-height:1.35;margin-top:22px}
 /* 毛笔书写：自左向右落笔 · 墨色浓淡 · 墨晕渗透 · 写完后若隐若现 */
 h1.hero-t{isolation:isolate}
+/* 墨色整体调亮：起笔不压死，收尾更淡 */
 h1.hero-t span{position:relative;display:inline-block;color:transparent;
-  background-image:linear-gradient(96deg,#26402f 4%,#4f9d76 48%,rgba(124,196,160,.62) 100%);
+  background-image:linear-gradient(96deg,#5aa67f 4%,#7cc4a0 52%,rgba(160,214,186,.85) 100%);
   -webkit-background-clip:text;background-clip:text;
   clip-path:inset(0 100% 0 0);opacity:.16;filter:blur(3px);
   animation:brush .92s cubic-bezier(.24,.7,.26,1) forwards,
             inkBreathe 5.2s ease-in-out infinite;
   animation-delay:var(--d,0s),calc(var(--d,0s) + 1.15s)}
-h1.hero-t span.g{background-image:linear-gradient(96deg,#b4607c 6%,#f2a0b8 52%,rgba(247,184,200,.66) 100%);
+h1.hero-t span.g{background-image:linear-gradient(96deg,#f2a0b8 6%,#ffc9d8 52%,rgba(255,214,226,.9) 100%);
   -webkit-background-clip:text;background-clip:text}
-/* 墨晕：同字重影，模糊渗开 */
+/* 墨晕：同字重影，模糊渗开（轻、淡） */
 h1.hero-t span::before{content:attr(data-c);position:absolute;left:0;top:0;z-index:-1;
-  color:rgba(90,166,127,.42);filter:blur(10px);opacity:0;
+  color:rgba(143,211,174,.2);filter:blur(13px);opacity:0;
   animation:inkHalo .92s ease-out forwards;animation-delay:var(--d,0s)}
-h1.hero-t span.g::before{color:rgba(242,160,184,.42)}
+h1.hero-t span.g::before{color:rgba(247,184,200,.22)}
 @keyframes brush{
   0%{clip-path:inset(0 100% 0 0);filter:blur(3.2px);opacity:.18}
   55%{filter:blur(.9px);opacity:1}
   100%{clip-path:inset(0 0 0 0);filter:blur(0);opacity:1}}
-@keyframes inkHalo{0%{opacity:0}60%{opacity:.9}100%{opacity:.55}}
-@keyframes inkBreathe{0%,100%{opacity:.88;filter:blur(.35px)}50%{opacity:1;filter:blur(0)}}
+@keyframes inkHalo{0%{opacity:0}60%{opacity:.5}100%{opacity:.3}}
+@keyframes inkBreathe{0%,100%{opacity:.9;filter:blur(.25px)}50%{opacity:1;filter:blur(0)}}
 /* 落笔处的墨点 */
-h1.hero-t span::after{content:'';position:absolute;left:-2%;top:62%;width:.26em;height:.26em;
-  border-radius:50%;background:rgba(79,157,118,.5);filter:blur(3px);opacity:0;
+h1.hero-t span::after{content:'';position:absolute;left:-2%;top:62%;width:.24em;height:.24em;
+  border-radius:50%;background:rgba(143,211,174,.34);filter:blur(3.5px);opacity:0;
   animation:dot .6s ease-out forwards;animation-delay:var(--d,0s)}
-h1.hero-t span.g::after{background:rgba(242,160,184,.5)}
+h1.hero-t span.g::after{background:rgba(247,184,200,.34)}
 @keyframes dot{0%{opacity:0;transform:scale(.4)}40%{opacity:.85;transform:scale(1.15)}100%{opacity:0;transform:scale(1.6)}}
 .hero-quote{font-family:var(--serif);font-weight:300;font-size:clamp(16px,2.4vw,24px);color:var(--dim);
   letter-spacing:.22em;margin-top:34px;line-height:2.1}
@@ -247,7 +255,31 @@ h1.hero-t span.g::after{background:rgba(242,160,184,.5)}
 .trio-cap span{display:block;margin-top:6px;font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;opacity:.82}
 .trio-cap .go{position:absolute;right:14px;bottom:12px;font-family:var(--mono);font-size:13px;
   opacity:.85;transition:transform .3s}
-.trio-item:hover .go{transform:translate(3px,-3px);opacity:1;color:var(--cream)}
+.trio-item.is-link:hover .go{transform:translate(3px,-3px);opacity:1;color:var(--cream)}
+/* 「点击可跳转」提示胶囊 */
+.tap{position:absolute;top:12px;right:12px;z-index:2;display:inline-flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.92);color:var(--leaf);font-family:var(--cute);font-size:11.5px;
+  letter-spacing:.14em;padding:6px 13px;border-radius:999px;
+  box-shadow:0 6px 16px rgba(60,90,73,.16);animation:tapPulse 2.6s ease-in-out infinite}
+.tap i{font-style:normal;color:var(--blossom);animation:arrow 1.6s ease-in-out infinite}
+@keyframes tapPulse{0%,100%{transform:scale(1);box-shadow:0 6px 16px rgba(60,90,73,.16)}
+  50%{transform:scale(1.05);box-shadow:0 8px 22px rgba(90,166,127,.3)}}
+@keyframes arrow{0%,100%{transform:translate(0,0)}50%{transform:translate(2px,-2px)}}
+@media(max-width:760px){.tap{top:9px;right:9px;font-size:11px;padding:5px 11px}}
+
+/* ===== BGM 按钮 ===== */
+.music{position:fixed;right:18px;bottom:18px;z-index:1500;width:46px;height:46px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--line-moon);background:rgba(255,255,255,.88);color:var(--leaf);
+  font-size:17px;cursor:pointer;box-shadow:var(--soft);backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .6s,transform .3s}
+.music.show{opacity:1;pointer-events:auto}
+.music:hover{transform:translateY(-2px);border-color:var(--mint)}
+.music.off{color:var(--dim2)}
+.music.on::after{content:'';position:absolute;inset:-4px;border-radius:50%;
+  border:1px solid var(--mint);animation:ring 2.4s ease-out infinite}
+@keyframes ring{0%{transform:scale(.9);opacity:.7}100%{transform:scale(1.4);opacity:0}}
+@media(max-width:760px){.music{right:12px;bottom:12px;width:42px;height:42px;font-size:15px}}
 /* ===== 梦境区 ===== */
 .dream-wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:44px;align-items:center;margin-top:30px}
 @media(max-width:860px){.dream-wrap{grid-template-columns:1fr;gap:26px}}
@@ -340,7 +372,7 @@ body{-webkit-tap-highlight-color:transparent}
 </nav>
 
 <div id="boot">
-  <div class="logo">迟留故时月<span class="gl">迟留故时月</span></div>
+  <div class="logo"><span style="--d:.5s" data-c="迟">迟</span><span style="--d:.85s" data-c="留">留</span><span style="--d:1.2s" data-c="故">故</span><span style="--d:1.55s" data-c="时">时</span><span style="--d:1.9s" data-c="月">月</span></div>
   <div class="sub">「 桂影来座隅 · 檐下灯已点 」</div>
   <div class="term" id="term"></div>
   <button class="enter" id="enter">推 门 入 座</button>
@@ -452,6 +484,7 @@ body{-webkit-tap-highlight-color:transparent}
         <div class="trio-cap"><b>钢琴 · 普陪 / 打卡</b><span>肆 · 日常 DAILY CARE</span></div>
       </div>
       <a class="trio-item is-link" href="https://www.kdocs.cn/l/csBaEWx0XRjq" target="_blank" rel="noopener" data-fx>
+        <span class="tap">点击可跳转 <i>↗</i></span>
         <img src="assets/trio-gramo.jpg" alt="留声机 · 树洞信箱" loading="lazy">
         <div class="trio-cap"><b>留声机 · 树洞信箱</b><span>「叩响心门」· RAINY DAYS</span><span class="go">↗</span></div>
       </a>
@@ -503,6 +536,8 @@ body{-webkit-tap-highlight-color:transparent}
   </section>
 </main>
 
+<audio id="bgm" src="assets/morning-rain.mp3" loop preload="auto"></audio>
+<button class="music" id="music" title="背景音乐 Morning Rain" aria-label="背景音乐开关">♫</button>
 <div class="petals" id="petals" style="position:fixed;inset:0;pointer-events:none;z-index:3"></div>
 <div class="footer">时月 · 座隅 // <b>迟留故时月 桂影来座隅</b> &nbsp;·&nbsp; 檐下灯常明 · 子衿</div>
 <div id="toast"></div>
@@ -587,6 +622,26 @@ function spawnPetals(){
     document.getElementById('petals').appendChild(p);
   }
 }
+
+/* ===== BGM：Morning Rain（推门即起，音量渐入） ===== */
+(function(){
+  const bgm=document.getElementById('bgm'),btn=document.getElementById('music');
+  const MAX=.42;
+  function fadeIn(){
+    let v=0;bgm.volume=0;
+    bgm.play().then(()=>{
+      btn.classList.add('show','on');
+      const step=()=>{v=Math.min(MAX,v+.02);bgm.volume=v;if(v<MAX)setTimeout(step,80);};
+      step();
+    }).catch(()=>{btn.classList.add('show','off')});
+  }
+  document.getElementById('enter').addEventListener('click',fadeIn);
+  btn.addEventListener('click',()=>{
+    if(bgm.paused){
+      bgm.play().then(()=>{btn.classList.remove('off');btn.classList.add('on')}).catch(()=>{});
+    }else{bgm.pause();btn.classList.add('off');btn.classList.remove('on');}
+  });
+})();
 
 /* ===== 滚动进度 + 扇区高亮 + 入场 ===== */
 (function(){
