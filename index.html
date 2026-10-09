@@ -101,10 +101,21 @@ section{min-height:100vh;display:flex;flex-direction:column;justify-content:cent
 #boot .logo span::before{content:attr(data-c);position:absolute;left:0;top:0;z-index:-1;
   color:rgba(122,196,160,.3);filter:blur(12px);opacity:0;
   animation:inkHalo 1.25s ease-out forwards;animation-delay:var(--d,0s)}
-#boot .sub{font-family:var(--mono);font-size:11px;letter-spacing:.42em;color:var(--dim);text-transform:uppercase}
-#boot .term{font-family:var(--mono);font-size:13px;color:var(--leaf);min-height:150px;width:min(540px,86vw);
-  border:1px solid var(--line-moon);background:rgba(255,255,255,.8);padding:18px;line-height:1.9;
-  letter-spacing:.06em;border-radius:16px;box-shadow:var(--soft)}
+/* 开屏小字：小楷逐字落墨 */
+#boot .sub{font-family:var(--brush);font-size:clamp(13px,3.2vw,18px);letter-spacing:.26em;
+  color:var(--dim);isolation:isolate;text-align:center;padding:0 12px;line-height:1.9}
+#boot .sub span{position:relative;display:inline-block;color:transparent;
+  background-image:linear-gradient(96deg,#4a6b58 8%,#6d8c79 55%,rgba(154,181,164,.78) 100%);
+  -webkit-background-clip:text;background-clip:text;
+  clip-path:inset(0 100% 0 0);opacity:.1;filter:blur(2.6px);
+  animation:brush .72s cubic-bezier(.24,.7,.26,1) forwards,inkBreathe 6s ease-in-out infinite;
+  animation-delay:var(--d,0s),calc(var(--d,0s) + 1.3s)}
+#boot .sub span::before{content:attr(data-c);position:absolute;left:0;top:0;z-index:-1;
+  color:rgba(143,211,174,.2);filter:blur(8px);opacity:0;
+  animation:inkHalo .72s ease-out forwards;animation-delay:var(--d,0s)}
+#boot .term{font-family:var(--brush);font-size:14px;color:var(--leaf);min-height:150px;width:min(540px,86vw);
+  border:1px solid var(--line-moon);background:rgba(255,255,255,.8);padding:18px;line-height:2.05;
+  letter-spacing:.08em;border-radius:16px;box-shadow:var(--soft)}
 #boot .term .p{color:var(--blossom)}#boot .term .ok{color:var(--leaf)}
 #boot .enter{font-family:var(--cute);font-size:16px;letter-spacing:.24em;color:#fff;
   border:none;padding:14px 40px;cursor:none;opacity:0;transition:all .5s;border-radius:999px;
@@ -574,6 +585,20 @@ body{-webkit-tap-highlight-color:transparent}
   document.addEventListener('mouseover',e=>{
     const t=e.target.closest('a,button,.svc,.card,.letter');
     cur.classList.toggle('big',!!t);
+  });
+})();
+
+/* ===== 开屏小字：拆成单字，逐字落墨 ===== */
+(function(){
+  const sub=document.querySelector('#boot .sub');
+  if(!sub)return;
+  const txt=sub.textContent.trim();
+  sub.textContent='';
+  [...txt].forEach((c,i)=>{
+    const ch=(c===' ')?'\u00a0':c, s=document.createElement('span');
+    s.textContent=ch; s.dataset.c=ch;
+    s.style.setProperty('--d',(2.5+i*0.085).toFixed(2)+'s');
+    sub.appendChild(s);
   });
 })();
 
