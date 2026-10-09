@@ -89,18 +89,12 @@ section{min-height:100vh;display:flex;flex-direction:column;justify-content:cent
   align-items:center;justify-content:center;gap:22px;cursor:none;transition:opacity .8s;
   background:radial-gradient(ellipse 70% 60% at 50% 40%,#fffdf7,#eaf7ec 60%,#dff1e4)}
 #boot.gone{opacity:0;pointer-events:none}
-/* 开屏：毛笔逐字落墨，慢慢浮出 */
+/* 开屏大字：整体淡入，不做逐字书写 */
 #boot .logo{font-family:var(--brush);font-weight:400;font-size:clamp(34px,6.4vw,66px);
-  letter-spacing:.16em;text-align:center;isolation:isolate;line-height:1.35;padding:0 6px}
-#boot .logo span{position:relative;display:inline-block;color:transparent;
-  background-image:linear-gradient(96deg,#3c5a49 6%,#5aa67f 52%,rgba(143,211,174,.78) 100%);
-  -webkit-background-clip:text;background-clip:text;
-  clip-path:inset(0 100% 0 0);opacity:.14;filter:blur(3.4px);
-  animation:brush 1.25s cubic-bezier(.24,.7,.26,1) forwards,inkBreathe 5.2s ease-in-out infinite;
-  animation-delay:var(--d,0s),calc(var(--d,0s) + 1.6s)}
-#boot .logo span::before{content:attr(data-c);position:absolute;left:0;top:0;z-index:-1;
-  color:rgba(122,196,160,.3);filter:blur(12px);opacity:0;
-  animation:inkHalo 1.25s ease-out forwards;animation-delay:var(--d,0s)}
+  letter-spacing:.16em;color:var(--leaf);text-align:center;line-height:1.35;padding:0 6px;
+  text-shadow:0 4px 20px rgba(143,211,174,.45);
+  animation:logoIn 1.1s cubic-bezier(.16,1,.3,1) both}
+@keyframes logoIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 /* 开屏小字：小楷逐字落墨 */
 #boot .sub{font-family:var(--brush);font-size:clamp(13px,3.2vw,18px);letter-spacing:.26em;
   color:var(--dim);isolation:isolate;text-align:center;padding:0 12px;line-height:1.9}
@@ -383,7 +377,7 @@ body{-webkit-tap-highlight-color:transparent}
 </nav>
 
 <div id="boot">
-  <div class="logo"><span style="--d:.5s" data-c="迟">迟</span><span style="--d:.85s" data-c="留">留</span><span style="--d:1.2s" data-c="故">故</span><span style="--d:1.55s" data-c="时">时</span><span style="--d:1.9s" data-c="月">月</span></div>
+  <div class="logo">迟留故时月</div>
   <div class="sub">「 桂影来座隅 · 檐下灯已点 」</div>
   <div class="term" id="term"></div>
   <button class="enter" id="enter">推 门 入 座</button>
