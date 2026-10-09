@@ -79,6 +79,11 @@ section{min-height:100vh;display:flex;flex-direction:column;justify-content:cent
 [data-fx]{opacity:0;transform:translateY(26px);transition:all .9s cubic-bezier(.16,1,.3,1)}
 [data-fx].vis{opacity:1;transform:none}
 
+/* 兜底：不支持 background-clip:text 时退回实色，避免字隐形 */
+@supports not ((-webkit-background-clip:text) or (background-clip:text)){
+  h1.hero-t span{color:var(--leaf);background-image:none;filter:none}
+  h1.hero-t span.g{color:var(--blossom)}
+}
 /* ===== boot ===== */
 #boot{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:22px;cursor:none;transition:opacity .8s;
@@ -125,11 +130,34 @@ section{min-height:100vh;display:flex;flex-direction:column;justify-content:cent
 .hero-kicker{font-family:var(--cute);letter-spacing:.4em;color:var(--leaf);font-size:14px}
 h1.hero-t{font-family:var(--brush);font-weight:400;color:var(--leaf);letter-spacing:.1em;
   font-size:clamp(52px,11vw,130px);line-height:1.35;margin-top:22px}
-h1.hero-t span{display:inline-block;opacity:0;transform:translateY(26px) rotate(4deg);
-  animation:zi .9s cubic-bezier(.16,1,.3,1) forwards;animation-delay:var(--d,0s);
-  text-shadow:0 6px 22px rgba(143,211,174,.4)}
-h1.hero-t span.g{color:var(--blossom);text-shadow:0 6px 18px rgba(247,184,200,.5)}
-@keyframes zi{to{opacity:1;transform:none}}
+/* 毛笔书写：自左向右落笔 · 墨色浓淡 · 墨晕渗透 · 写完后若隐若现 */
+h1.hero-t{isolation:isolate}
+h1.hero-t span{position:relative;display:inline-block;color:transparent;
+  background-image:linear-gradient(96deg,#26402f 4%,#4f9d76 48%,rgba(124,196,160,.62) 100%);
+  -webkit-background-clip:text;background-clip:text;
+  clip-path:inset(0 100% 0 0);opacity:.16;filter:blur(3px);
+  animation:brush .92s cubic-bezier(.24,.7,.26,1) forwards,
+            inkBreathe 5.2s ease-in-out infinite;
+  animation-delay:var(--d,0s),calc(var(--d,0s) + 1.15s)}
+h1.hero-t span.g{background-image:linear-gradient(96deg,#b4607c 6%,#f2a0b8 52%,rgba(247,184,200,.66) 100%);
+  -webkit-background-clip:text;background-clip:text}
+/* 墨晕：同字重影，模糊渗开 */
+h1.hero-t span::before{content:attr(data-c);position:absolute;left:0;top:0;z-index:-1;
+  color:rgba(90,166,127,.42);filter:blur(10px);opacity:0;
+  animation:inkHalo .92s ease-out forwards;animation-delay:var(--d,0s)}
+h1.hero-t span.g::before{color:rgba(242,160,184,.42)}
+@keyframes brush{
+  0%{clip-path:inset(0 100% 0 0);filter:blur(3.2px);opacity:.18}
+  55%{filter:blur(.9px);opacity:1}
+  100%{clip-path:inset(0 0 0 0);filter:blur(0);opacity:1}}
+@keyframes inkHalo{0%{opacity:0}60%{opacity:.9}100%{opacity:.55}}
+@keyframes inkBreathe{0%,100%{opacity:.88;filter:blur(.35px)}50%{opacity:1;filter:blur(0)}}
+/* 落笔处的墨点 */
+h1.hero-t span::after{content:'';position:absolute;left:-2%;top:62%;width:.26em;height:.26em;
+  border-radius:50%;background:rgba(79,157,118,.5);filter:blur(3px);opacity:0;
+  animation:dot .6s ease-out forwards;animation-delay:var(--d,0s)}
+h1.hero-t span.g::after{background:rgba(242,160,184,.5)}
+@keyframes dot{0%{opacity:0;transform:scale(.4)}40%{opacity:.85;transform:scale(1.15)}100%{opacity:0;transform:scale(1.6)}}
 .hero-quote{font-family:var(--serif);font-weight:300;font-size:clamp(16px,2.4vw,24px);color:var(--dim);
   letter-spacing:.22em;margin-top:34px;line-height:2.1}
 .hero-quote i{color:var(--violet);font-style:normal}
@@ -208,9 +236,10 @@ h1.hero-t span.g{color:var(--blossom);text-shadow:0 6px 18px rgba(247,184,200,.5
 .trio-item{position:relative;display:block;border-radius:18px;overflow:hidden;
   border:1px solid var(--line-moon);box-shadow:var(--soft);text-decoration:none;transition:all .35s}
 .trio-item img{width:100%;display:block;transition:transform 1.4s cubic-bezier(.16,1,.3,1)}
-.trio-item:hover{transform:translateY(-5px);border-color:var(--mint);
+.trio-item.is-link{cursor:pointer}
+.trio-item.is-link:hover{transform:translateY(-5px);border-color:var(--mint);
   box-shadow:0 16px 36px rgba(143,211,174,.3)}
-.trio-item:hover img{transform:scale(1.06)}
+.trio-item.is-link:hover img{transform:scale(1.06)}
 .trio-cap{position:absolute;left:0;right:0;bottom:0;text-align:center;
   background:linear-gradient(rgba(60,90,73,0),rgba(60,90,73,.88));
   color:#fff;padding:42px 16px 14px;font-family:var(--serif)}
@@ -266,10 +295,31 @@ h1.hero-t span.g{color:var(--blossom);text-shadow:0 6px 18px rgba(247,184,200,.5
 
 @media(max-width:760px){
   #sectors{display:none}
-  section{padding:96px 20px}
+  section{padding:88px 18px}
   .frame{inset:22px 10px}
   .moon-orb{right:4%;top:8%;opacity:.55}
+  #hud{gap:10px;padding:11px 14px;font-size:11.5px;letter-spacing:.14em}
+  #hud span:nth-child(3){display:none}
+  h1.hero-t{font-size:clamp(44px,13vw,72px)}
+  .hero-quote{font-size:clamp(15px,4.4vw,20px);margin-top:26px;letter-spacing:.16em}
+  .card{padding:22px}
+  .card-img{margin:-22px -22px 16px;height:168px}
+  .svc{padding:22px}
+  .svc .go{right:16px;top:18px}
+  .letter{min-height:240px;padding:26px 18px}
+  .trio-cap{padding:26px 12px 11px}
+  .trio-cap b{font-size:14px;letter-spacing:.16em}
+  .dream-wrap{gap:20px}
+  .footer{font-size:11.5px;letter-spacing:.16em}
 }
+@media(max-width:360px){
+  section{padding:80px 14px}
+  .card,.svc{padding:18px}
+  .card-img{margin:-18px -18px 14px;height:150px}
+  .p-row{padding:11px 2px}
+  .title{font-size:clamp(26px,8vw,40px)}
+}
+body{-webkit-tap-highlight-color:transparent}
 </style>
 </head>
 <body class="locked">
@@ -314,8 +364,8 @@ h1.hero-t span.g{color:var(--blossom);text-shadow:0 6px 18px rgba(247,184,200,.5
     </svg>
     <div class="hero-kicker" data-fx>拾 光 小 筑 · 座 隅 已 开</div>
     <h1 class="hero-t">
-      <span style="--d:.1s">迟</span><span style="--d:.2s">留</span><span class="g" style="--d:.3s">故</span><span class="g" style="--d:.4s">时</span><span class="g" style="--d:.5s">月</span><br>
-      <span style="--d:.65s">桂</span><span style="--d:.75s">影</span><span style="--d:.85s">来</span><span class="g" style="--d:.95s">座</span><span class="g" style="--d:1.05s">隅</span>
+      <span style="--d:.1s" data-c="迟">迟</span><span style="--d:.26s" data-c="留">留</span><span class="g" style="--d:.42s" data-c="故">故</span><span class="g" style="--d:.58s" data-c="时">时</span><span class="g" style="--d:.74s" data-c="月">月</span><br>
+      <span style="--d:1s" data-c="桂">桂</span><span style="--d:1.16s" data-c="影">影</span><span style="--d:1.32s" data-c="来">来</span><span class="g" style="--d:1.48s" data-c="座">座</span><span class="g" style="--d:1.64s" data-c="隅">隅</span>
     </h1>
     <p class="hero-quote" data-fx>「在淡淡的<i>秋季</i><br>我多想穿过<i>枯死的篱墙</i>&nbsp;&nbsp;走向你」</p>
     <div class="hero-cite" data-fx>—— 开篇 · 子衿</div>
@@ -327,7 +377,7 @@ h1.hero-t span.g{color:var(--blossom);text-shadow:0 6px 18px rgba(247,184,200,.5
     <div class="frame"></div><span class="corner2 tl"></span><span class="corner2 br"></span>
     <div class="sec-tag" data-fx><span class="id">卷一</span> 关于我 // 月的音介</div>
     <h2 class="title" data-fx>正在接入 <b>月的音介</b></h2>
-    <p class="lead" data-fx>连接对象：时月 · 灯火已明 · 共情全开。</p>
+    <p class="lead" data-fx>桂影落座的时候，月色正浓。<br>我在檐下留了一盏灯，等一个愿意慢慢说话的人。</p>
     <div class="profile">
       <div class="card" data-fx>
         <div class="card-img"><img src="assets/green.jpg" alt="时月的绿色小世界"></div>
@@ -393,15 +443,15 @@ h1.hero-t span.g{color:var(--blossom);text-shadow:0 6px 18px rgba(247,184,200,.5
       </div>
     </div>
     <div class="trio-grid">
-      <a class="trio-item" href="https://www.kdocs.cn/l/cjSgkKv78EKg" target="_blank" rel="noopener" data-fx>
+      <div class="trio-item" data-fx>
         <img src="assets/trio-harp.jpg" alt="竖琴 · 哄睡" loading="lazy">
-        <div class="trio-cap"><b>竖琴 · 哄睡</b><span>叁 · 夜谈 LULLABY</span><span class="go">↗</span></div>
-      </a>
-      <a class="trio-item" href="https://www.kdocs.cn/l/cjSgkKv78EKg" target="_blank" rel="noopener" data-fx>
+        <div class="trio-cap"><b>竖琴 · 哄睡</b><span>叁 · 夜谈 LULLABY</span></div>
+      </div>
+      <div class="trio-item" data-fx>
         <img src="assets/trio-piano.jpg" alt="钢琴 · 普陪打卡" loading="lazy">
-        <div class="trio-cap"><b>钢琴 · 普陪 / 打卡</b><span>肆 · 日常 DAILY CARE</span><span class="go">↗</span></div>
-      </a>
-      <a class="trio-item" href="https://www.kdocs.cn/l/csBaEWx0XRjq" target="_blank" rel="noopener" data-fx>
+        <div class="trio-cap"><b>钢琴 · 普陪 / 打卡</b><span>肆 · 日常 DAILY CARE</span></div>
+      </div>
+      <a class="trio-item is-link" href="https://www.kdocs.cn/l/csBaEWx0XRjq" target="_blank" rel="noopener" data-fx>
         <img src="assets/trio-gramo.jpg" alt="留声机 · 树洞信箱" loading="lazy">
         <div class="trio-cap"><b>留声机 · 树洞信箱</b><span>「叩响心门」· RAINY DAYS</span><span class="go">↗</span></div>
       </a>
