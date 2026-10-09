@@ -371,8 +371,9 @@ body{-webkit-tap-highlight-color:transparent}
   <a href="#about" data-s="1"><span>卷一 · 关于我</span><span class="tick"></span></a>
   <a href="#hole" data-s="2"><span>卷二 · 树洞</span><span class="tick"></span></a>
   <a href="#svc" data-s="3"><span>卷三 · 哄睡普陪</span><span class="tick"></span></a>
-  <a href="#dream" data-s="4"><span>卷四 · 梦境</span><span class="tick"></span></a>
-  <a href="#end" data-s="5"><span>卷终 · 桂影</span><span class="tick"></span></a>
+  <a href="#notice" data-s="4"><span>卷四 · 须知</span><span class="tick"></span></a>
+  <a href="#dream" data-s="5"><span>卷五 · 梦境</span><span class="tick"></span></a>
+  <a href="#end" data-s="6"><span>卷终 · 桂影</span><span class="tick"></span></a>
 </nav>
 
 <div id="boot">
@@ -500,10 +501,23 @@ body{-webkit-tap-highlight-color:transparent}
     </div>
   </section>
 
+  <!-- 05 须知 -->
+  <section id="notice">
+    <div class="frame"></div><span class="corner2 tl"></span><span class="corner2 br"></span>
+    <div class="sec-tag" data-fx><span class="id">卷四</span> 须知 // NOTICE</div>
+    <h2 class="title" data-fx>入座前请<b>过目须知</b></h2>
+    <p class="lead" data-fx>座隅很小，规矩很轻：尊重、双向、不越界。完整条款以文档为准。</p>
+    <div class="doc-links" data-fx>
+      <a class="doc-link" href="https://www.kdocs.cn/l/cjSgkKv78EKg" target="_blank" rel="noopener">
+        <span class="ico">▣</span><span>查看全部须知</span><span class="go">↗</span>
+      </a>
+    </div>
+  </section>
+
   <!-- 梦境 -->
   <section id="dream">
     <div class="frame"></div><span class="corner2 tl"></span><span class="corner2 br"></span>
-    <div class="sec-tag" data-fx><span class="id">卷四</span> 梦境一隅 // FLOS DREAM</div>
+    <div class="sec-tag" data-fx><span class="id">卷五</span> 梦境一隅 // FLOS DREAM</div>
     <div class="dream-wrap">
       <div class="dream-img" data-fx><img src="assets/poster.jpg" alt="FLOS DREAM 梦境样本"></div>
       <div class="dream-tx" data-fx>
@@ -653,7 +667,7 @@ function spawnPetals(){
   const prog=document.getElementById('prog'),hudSec=document.getElementById('hud-sec');
   const secs=[...document.querySelectorAll('main section')];
   const navA=[...document.querySelectorAll('#sectors a')];
-  const ids=['卷首','卷一','卷二','卷三·肆','卷四','卷终'];
+  const ids=['卷首','卷一','卷二','卷三','卷四','卷五','卷终'];
   addEventListener('scroll',()=>{
     const h=document.documentElement;
     prog.style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+'%';
